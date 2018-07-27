@@ -1,0 +1,3 @@
+*.c
+lib/github.com/athas/vector/*
+!lib/github.com/athas/vector/*.fut
