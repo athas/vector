@@ -80,7 +80,7 @@ module type vector = {
 --
 -- Since the size of the vectors is not constrained by the type, it is
 -- possible for `zip` to fail with a size error, just as with the
--- ordinary `zip`@term.
+-- ordinary `zip`@term@"/futlib/array".
 module any_vector : vector with vector 'a = []a = {
   type vector 'a = []a
 
