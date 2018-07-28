@@ -1,3 +1,5 @@
+-- | ignore
+
 import "vector"
 
 module vector_2 = cat_vector vector_1 vector_1
