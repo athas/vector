@@ -1,4 +1,4 @@
-# Static vectors for Futhark [![Build Status](https://travis-ci.org/athas/vector.svg?branch=master)](https://travis-ci.org/athas/vector)
+# Static vectors for Futhark [![Build Status](https://travis-ci.org/athas/vector.svg?branch=master)](https://travis-ci.org/athas/vector) [![Documentation](https://futhark-lang.org/pkgs/github.com/athas/vector/status.svg)](https://futhark-lang.org/pkgs/github.com/athas/vector/latest/)
 
 A Futhark library for efficient statically-sized vectors.  This is
 useful when working with many small vectors that do not need to be
