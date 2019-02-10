@@ -7,8 +7,8 @@ individually stored in memory.
 ## Installation
 
 ```
-$ futhark-pkg add github.com/athas/vector
-$ futhark-pkg sync
+$ futhark pkg add github.com/athas/vector
+$ futhark pkg sync
 ```
 
 ## Usage example
