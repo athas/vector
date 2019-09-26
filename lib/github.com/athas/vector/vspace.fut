@@ -49,8 +49,23 @@ module type vspace_2d = {
   include vspace with real = real with vector = {x: real, y: real}
 }
 
+-- | The operations that must be supported by the scalars contained in
+-- a vector.  The builtin modules `f32`@term and `f64`@term satisfy
+-- this interface.
+module type scalar = {
+  type t
+
+  val +: t -> t -> t
+  val -: t -> t -> t
+  val *: t -> t -> t
+  val /: t -> t -> t
+
+  val i32: i32 -> t
+  val sqrt : t -> t
+}
+
 -- | Construct a 2D vector space.
-module mk_vspace_2d(real: real): vspace_2d with real = real.t = {
+module mk_vspace_2d (real: scalar): vspace_2d with real = real.t = {
   type real = real.t
 
   type vector = {x: real, y: real}
