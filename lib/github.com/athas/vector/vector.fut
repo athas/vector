@@ -53,6 +53,12 @@ module type vector = {
   -- | Construct a vector of pairs from two vectors.
   val zip 'a 'b : vector a -> vector b -> vector (a,b)
 
+  -- | Turn a vector of arrays into an array of vectors.
+  val vzip [n] 'a : vector ([n]a) -> [n](vector a)
+
+  -- | Turn a array of vectors a vector of arrays.
+  val vunzip [n] 'a : [n](vector a) -> vector ([n]a)
+
   -- | A vector with increasing elements, starting at 0.
   val iota : vector i32
 
@@ -89,6 +95,8 @@ module any_vector(P: { val length : i32 }) : vector with vector 'a = [P.length]a
   let map = map
   let reduce = reduce
   let zip = zip
+  let vzip = transpose
+  let vunzip = transpose
   let iota = iota P.length
   let get i a = a[i]
   let set i v a = copy a with [i] = v
@@ -105,7 +113,9 @@ module vector_1 : vector = {
   let map f a = f a
   let reduce f ne a = f ne a
   let zip a b = (a, b)
-  let iota = 0
+  let vzip = id
+  let vunzip = id
+  let iota = 0i32
   let get _ a = a
   let set _ x _ = x
   let length = 1i32
@@ -121,9 +131,17 @@ module vector_1 : vector = {
 module cat_vector (X: vector) (Y: vector): vector = {
   type vector 'a = (X.vector a, Y.vector a)
 
+  let vzip (xs, ys) =
+    zip (X.vzip xs) (Y.vzip ys)
+
+  let vunzip v =
+    let (xs, ys) = unzip v
+    in (X.vunzip xs, Y.vunzip ys)
+
   let map f (xs, ys) = (X.map f xs, Y.map f ys)
   let reduce f ne (xs, ys) = X.reduce f ne xs `f` Y.reduce f ne ys
   let zip (xs_a, ys_a) (xs_b, ys_b) = (X.zip xs_a xs_b, Y.zip ys_a ys_b)
+
   let iota = (X.iota, Y.map (+X.length) Y.iota)
   let get i (xs, ys) = if i < X.length then X.get i xs else Y.get (i-X.length) ys
   let set i v (xs, ys) = if i < X.length then (X.set i v xs, ys)
