@@ -39,24 +39,6 @@ module type vspace = {
 
   -- | Transform to unit vectortor.
   val normalise: vector -> vector
-
-  -- | Retrieve the element at some position.  Out of bounds accesses
-  -- have unspecified results.
-  val get: i32 -> vector -> real
-
-  -- | Set the element at some position.  Out of bounds accesses have
-  -- unspecified results.
-  val set: i32 -> real -> vector -> vector
-
-  -- | The length of vectors.
-  val length : i32
-
-  -- | Convert a vector to an array.
-  val to_array: vector -> [length]real
-
-  -- | Create a vector from an array.
-  val from_array : [length]real -> vector
-
 }
 
 -- | A two-dimensional vector space is just a vector space, but we
@@ -111,12 +93,6 @@ module mk_vspace_2d (real: scalar): vspace_2d with real = real.t = {
   let normalise (v: vector): vector =
     let l = norm v
     in scale (real.i32 1 real./ l) v
-
-  let get i ({x,y}: vector) = if i == 0 then x else y
-  let set i v ({x,y}: vector) = if i == 0 then {x=v,y} else {x,y=v}
-  let length = 2
-  let to_array {x,y} = [x,y]
-  let from_array arr = {x=arr[0], y=arr[1]}
 }
 
 -- | A three-dimensional vector space is just a vector space, but we
@@ -164,14 +140,6 @@ module mk_vspace_3d(real: real): vspace_3d with real = real.t = {
   let normalise (v: vector): vector =
     let l = norm v
     in scale (real.i32 1 real./ l) v
-
-  let get i ({x,y,z}: vector) =
-    if i == 0 then x else if i == 1 then y else z
-  let set i v ({x,y,z}: vector) =
-    if i == 0 then {x=v,y,z} else if i == 1 then {x,y=v,z} else {x,y,z=v}
-  let length = 3
-  let to_array {x,y,z} = [x,y,z]
-  let from_array arr = {x=arr[0], y=arr[1], z=arr[2]}
 }
 
 import "vector"
@@ -204,10 +172,4 @@ module mk_vspace(V: vector) (real: real):
   let normalise (v: vector): vector =
     let l = norm v
     in scale (real.i32 1 real./ l) v
-
-  let get = V.get
-  let set = V.set
-  let length = V.length
-  let to_array = V.to_array
-  let from_array = V.from_array
 }
