@@ -53,21 +53,23 @@ module type vector = {
   -- | Construct a vector of pairs from two vectors.
   val zip 'a 'b : vector a -> vector b -> vector (a,b)
 
+  -- | A vector with increasing elements, starting at 0.
+  val iota : vector i32
+
   -- | Retrieve the element at some position.
   val get 'a: i32 -> vector a -> a
 
   -- | Set the element at some position.
   val set 'a: i32 -> a -> vector a -> vector a
 
-  -- | The length of a vector.
-  val length 'a : vector a -> i32
+  -- | The length of vectors.
+  val length : i32
 
   -- | Convert a vector to an array.
-  val to_array 'a: vector a -> []a
+  val to_array 'a: vector a -> [length]a
 
-  -- | Create a vector from an array.  This may fail if the array has
-  -- an unexpected size.
-  val from_array 'a : []a -> vector a
+  -- | Create a vector from an array.
+  val from_array 'a : [length]a -> vector a
 }
 
 -- | An implementation of `vector`@mtype that uses an ordinary array
@@ -79,18 +81,18 @@ module type vector = {
 -- implementation of `vector`@mtype, it is probably better to use
 -- arrays directly than to go through this module.
 --
--- When using this module, you just need to instantiate it with
--- another module that indicates the dimensionality of the vectors you
--- will be producing.
-module any_vector(P: { val d : i32 }) : vector with vector 'a = [P.d]a = {
-  type vector 'a = [P.d]a
-
+-- When using this module, you need to instantiate it with another
+-- module that indicates the dimensionality of the vectors you will be
+-- producing.
+module any_vector(P: { val length : i32 }) : vector with vector 'a = [P.length]a = {
+  type vector 'a = [P.length]a
   let map = map
   let reduce = reduce
   let zip = zip
+  let iota = iota P.length
   let get i a = a[i]
   let set i v a = copy a with [i] = v
-  let length = length
+  let length = P.length
   let to_array = id
   let from_array = id
 }
@@ -103,9 +105,10 @@ module vector_1 : vector = {
   let map f a = f a
   let reduce f ne a = f ne a
   let zip a b = (a, b)
+  let iota = 0
   let get _ a = a
   let set _ x _ = x
-  let length _ = 1i32
+  let length = 1i32
   let to_array a = [a]
   let from_array as = as[0]
 }
@@ -121,12 +124,13 @@ module cat_vector (X: vector) (Y: vector): vector = {
   let map f (xs, ys) = (X.map f xs, Y.map f ys)
   let reduce f ne (xs, ys) = X.reduce f ne xs `f` Y.reduce f ne ys
   let zip (xs_a, ys_a) (xs_b, ys_b) = (X.zip xs_a xs_b, Y.zip ys_a ys_b)
-  let get i (xs, ys) = if i < X.length xs then X.get i xs else Y.get (i-X.length xs) ys
-  let set i v (xs, ys) = if i < X.length xs then (X.set i v xs, ys)
-                         else (xs, Y.set (i-X.length xs) v ys)
-  let length (xs, ys) = X.length xs + Y.length ys
+  let iota = (X.iota, Y.map (+X.length) Y.iota)
+  let get i (xs, ys) = if i < X.length then X.get i xs else Y.get (i-X.length) ys
+  let set i v (xs, ys) = if i < X.length then (X.set i v xs, ys)
+                         else (xs, Y.set (i-X.length) v ys)
+  let length = X.length + Y.length
   let to_array (xs, ys) = X.to_array xs ++ Y.to_array ys
   let from_array as = let xs = X.from_array as
-                      let ys = Y.from_array as[X.length xs:]
+                      let ys = Y.from_array as[X.length:]
                       in (xs, ys)
 }
