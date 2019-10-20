@@ -46,6 +46,9 @@ module type vector = {
   -- | Apply a function to every element of the vector.
   val map 'a 'b: (a -> b) -> vector a -> vector b
 
+  -- | Apply a function to every pair of elements from two vectors.
+  val map2 'a 'b 'c: (a -> b -> c) -> vector a -> vector b -> vector c
+
   -- | Perform a reduction of the vector with an associative operator
   -- that has the provided neutral element.
   val reduce 'a : (a -> a -> a) -> a -> vector a -> a
@@ -93,6 +96,7 @@ module type vector = {
 module any_vector(P: { val length : i32 }) : vector with vector 'a = [P.length]a = {
   type vector 'a = [P.length]a
   let map = map
+  let map2 = map2
   let reduce = reduce
   let zip = zip
   let vzip = transpose
@@ -111,6 +115,7 @@ module vector_1 : vector = {
   type vector 'a = a
 
   let map f a = f a
+  let map2 f a b = f a b
   let reduce f ne a = f ne a
   let zip a b = (a, b)
   let vzip = id
@@ -139,6 +144,7 @@ module cat_vector (X: vector) (Y: vector): vector = {
     in (X.vunzip xs, Y.vunzip ys)
 
   let map f (xs, ys) = (X.map f xs, Y.map f ys)
+  let map2 f (xs_a, ys_a) (xs_b, ys_b) = (X.map2 f xs_a xs_b, Y.map2 f ys_a ys_b)
   let reduce f ne (xs, ys) = X.reduce f ne xs `f` Y.reduce f ne ys
   let zip (xs_a, ys_a) (xs_b, ys_b) = (X.zip xs_a xs_b, Y.zip ys_a ys_b)
 
