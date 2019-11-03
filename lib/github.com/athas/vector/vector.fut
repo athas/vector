@@ -93,18 +93,18 @@ module type vector = {
 -- When using this module, you need to instantiate it with another
 -- module that indicates the dimensionality of the vectors you will be
 -- producing.
-module any_vector(P: { val length : i32 }) : vector with vector 'a = [P.length]a = {
-  type vector 'a = [P.length]a
+module any_vector(P: { val length : i32 }) : vector = {
+  let length = P.length
+  type vector 'a = [length]a
   let map = map
   let map2 = map2
   let reduce = reduce
   let zip = zip
   let vzip = transpose
   let vunzip = transpose
-  let iota = iota P.length
+  let iota = iota length
   let get i a = a[i]
   let set i v a = copy a with [i] = v
-  let length = P.length
   let to_array = id
   let from_array = id
 }
@@ -124,7 +124,7 @@ module vector_1 : vector = {
   let get _ a = a
   let set _ x _ = x
   let length = 1i32
-  let to_array a = [a]
+  let to_array a = replicate length a
   let from_array as = as[0]
 }
 
@@ -153,8 +153,8 @@ module cat_vector (X: vector) (Y: vector): vector = {
   let set i v (xs, ys) = if i < X.length then (X.set i v xs, ys)
                          else (xs, Y.set (i-X.length) v ys)
   let length = X.length + Y.length
-  let to_array (xs, ys) = X.to_array xs ++ Y.to_array ys
-  let from_array as = let xs = X.from_array as
-                      let ys = Y.from_array as[X.length:]
-                      in (xs, ys)
+  let to_array 't (xs, ys) = X.to_array xs ++ Y.to_array ys : [length]t
+  let from_array 't as = let xs = X.from_array (take X.length as)
+                         let ys = Y.from_array (take Y.length (drop X.length as))
+                         in (xs, ys)
 }
