@@ -65,6 +65,9 @@ module type vector = {
   -- | A vector with increasing elements, starting at 0.
   val iota : vector i32
 
+  -- | A vector with filled with a replicated value
+  val repeat 'a : a -> vector a
+
   -- | Retrieve the element at some position.
   val get 'a: i32 -> vector a -> a
 
@@ -103,6 +106,7 @@ module any_vector(P: { val length : i32 }) : vector = {
   let vzip = transpose
   let vunzip = transpose
   let iota = iota length
+  let repeat a = replicate P.length a
   let get i a = a[i]
   let set i v a = copy a with [i] = v
   let to_array = id
@@ -121,6 +125,7 @@ module vector_1 : vector = {
   let vzip = id
   let vunzip = id
   let iota = 0i32
+  let repeat a = a
   let get _ a = a
   let set _ x _ = x
   let length = 1i32
@@ -149,6 +154,7 @@ module cat_vector (X: vector) (Y: vector): vector = {
   let zip (xs_a, ys_a) (xs_b, ys_b) = (X.zip xs_a xs_b, Y.zip ys_a ys_b)
 
   let iota = (X.iota, Y.map (+X.length) Y.iota)
+  let repeat a = (X.repeat a, Y.repeat a)
   let get i (xs, ys) = if i < X.length then X.get i xs else Y.get (i-X.length) ys
   let set i v (xs, ys) = if i < X.length then (X.set i v xs, ys)
                          else (xs, Y.set (i-X.length) v ys)
