@@ -39,6 +39,12 @@ module type vspace = {
 
   -- | Transform to unit vectortor.
   val normalise: vector -> vector
+
+  -- | Neutral element for the addition.
+  val zero: vector
+
+  -- | Neutral element for the multiplication.
+  val one: real
 }
 
 -- | A two-dimensional vector space is just a vector space, but we
@@ -93,6 +99,9 @@ module mk_vspace_2d (real: scalar): vspace_2d with real = real.t = {
   let normalise (v: vector): vector =
     let l = norm v
     in scale (real.i32 1 real./ l) v
+
+  let zero = {x = real.i32 0, y = real.i32 0}
+  let one  = real.i32 1
 }
 
 -- | A three-dimensional vector space is just a vector space, but we
@@ -140,6 +149,9 @@ module mk_vspace_3d(real: real): vspace_3d with real = real.t = {
   let normalise (v: vector): vector =
     let l = norm v
     in scale (real.i32 1 real./ l) v
+
+  let zero = {x = real.i32 0, y = real.i32 0, z = real.i32 0}
+  let one  = real.i32 1
 }
 
 import "vector"
@@ -172,4 +184,7 @@ module mk_vspace(V: vector) (real: real):
   let normalise (v: vector): vector =
     let l = norm v
     in scale (real.i32 1 real./ l) v
+
+  let zero = V.repeat (real.i32 0)
+  let one  = real.i32 1
 }
