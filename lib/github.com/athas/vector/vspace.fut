@@ -12,6 +12,11 @@ module type vspace = {
   -- | A vector type.  Semantically a sequence of `real`s.
   type vector
 
+    -- | Neutral element for the addition.
+  val zero: vector
+  -- | Neutral element for the multiplication by a scalar.
+  val one: real
+
   -- | Apply an operation to each element of the vector.
   val map : (real -> real) -> vector -> vector
 
@@ -39,12 +44,6 @@ module type vspace = {
 
   -- | Transform to unit vectortor.
   val normalise: vector -> vector
-
-  -- | Neutral element for the addition.
-  val zero: vector
-
-  -- | Neutral element for the multiplication.
-  val one: real
 }
 
 -- | A two-dimensional vector space is just a vector space, but we
@@ -76,6 +75,9 @@ module mk_vspace_2d (real: scalar): vspace_2d with real = real.t = {
 
   type vector = {x: real, y: real}
 
+  let zero = {x = real.i32 0, y = real.i32 0}
+  let one  = (real.i32 1)
+
   let map f (v : vector) =
     {x = f v.x, y = f v.y}
 
@@ -98,10 +100,7 @@ module mk_vspace_2d (real: scalar): vspace_2d with real = real.t = {
 
   let normalise (v: vector): vector =
     let l = norm v
-    in scale (real.i32 1 real./ l) v
-
-  let zero = {x = real.i32 0, y = real.i32 0}
-  let one  = real.i32 1
+    in scale (one real./ l) v
 }
 
 -- | A three-dimensional vector space is just a vector space, but we
@@ -121,6 +120,9 @@ module mk_vspace_3d(real: real): vspace_3d with real = real.t = {
   type real = real.t
 
   type vector = {x: real, y: real, z: real}
+
+  let zero = {x = real.i32 0, y = real.i32 0, z = real.i32 0}
+  let one  = real.i32 1
 
   let map f (v : vector) =
     {x = f v.x, y = f v.y, z = f v.z}
@@ -148,10 +150,7 @@ module mk_vspace_3d(real: real): vspace_3d with real = real.t = {
 
   let normalise (v: vector): vector =
     let l = norm v
-    in scale (real.i32 1 real./ l) v
-
-  let zero = {x = real.i32 0, y = real.i32 0, z = real.i32 0}
-  let one  = real.i32 1
+    in scale (one real./ l) v
 }
 
 import "vector"
@@ -163,6 +162,9 @@ module mk_vspace(V: vector) (real: real):
        vspace with real = real.t with vector = V.vector real.t = {
   type real = real.t
   type vector = V.vector real
+
+  let zero = V.replicate (real.i32 0)
+  let one: real.t  = real.i32 1
 
   let map = V.map
   let map2 f a b = V.zip a b |> V.map (uncurry f)
@@ -183,8 +185,5 @@ module mk_vspace(V: vector) (real: real):
 
   let normalise (v: vector): vector =
     let l = norm v
-    in scale (real.i32 1 real./ l) v
-
-  let zero = V.repeat (real.i32 0)
-  let one  = real.i32 1
+    in scale (one real./ l) v
 }
