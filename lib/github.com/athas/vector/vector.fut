@@ -108,7 +108,7 @@ module any_vector(P: { val length : i32 }) : vector = {
   let vzip = transpose
   let vunzip = transpose
   let iota = iota length
-  let replicate a = stdreplicate P.length a
+  let replicate a = stdreplicate length a
   let get i a = a[i]
   let set i v a = copy a with [i] = v
   let to_array = id
