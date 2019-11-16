@@ -113,6 +113,18 @@ module type vspace_3d = {
 
   -- | Cross product.
   val cross: vector -> vector -> vector
+
+  -- | Rotate vector around the *x* axis.  This leaves the *x* axis
+  -- unchanged.
+  val rot_x : (radians: real) -> vector -> vector
+
+  -- | Rotate vector around the *y* axis.  This leaves the *y* axis
+  -- unchanged.
+  val rot_y : (radians: real) -> vector -> vector
+
+  -- | Rotate vector around the *z* axis.  This leaves the *z* axis
+  -- unchanged.
+  val rot_z : (radians: real) -> vector -> vector
 }
 
 -- | Construct a 3D vector space.
@@ -151,6 +163,28 @@ module mk_vspace_3d(real: real): vspace_3d with real = real.t = {
   let normalise (v: vector): vector =
     let l = norm v
     in scale (one real./ l) v
+
+  let rot_x (theta: real) ({x,y,z} : vector) =
+    let cos_theta = real.cos theta
+    let sin_theta = real.sin theta
+    in { x
+       , y = real.(cos_theta * y - sin_theta * z)
+       , z = real.(sin_theta * y + cos_theta * z)}
+
+  let rot_y (theta: real) ({x,y,z} : vector) =
+    let cos_theta = real.cos theta
+    let sin_theta = real.sin theta
+    in { x = real.(cos_theta * x - sin_theta * z)
+       , y
+       , z = real.(sin_theta * x + cos_theta * z)}
+
+  let rot_z (theta: real) ({x,y,z} : vector) =
+    let cos_theta = real.cos theta
+    let sin_theta = real.sin theta
+    in { x = real.(cos_theta * x - sin_theta * y)
+       , y = real.(sin_theta * x + cos_theta * y)
+       , z}
+
 }
 
 import "vector"

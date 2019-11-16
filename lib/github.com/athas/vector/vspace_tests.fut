@@ -84,3 +84,19 @@ entry test_zero (x1: f64) (y1: f64) (z1: f64) =
 
 entry test_one (x1: f64) (y1: f64) (z1: f64) =
   unvec3 (vec3.scale vec3.one {x=x1,y=y1,z=z1})
+
+-- ==
+-- entry: test_rot_x
+-- input { 3.141592653589793 0.0 1.0 -1.0 } output { 0.0 -1.0 1.0 }
+
+-- ==
+-- entry: test_rot_y
+-- input { 3.141592653589793 1.0 0.0 -1.0 } output { -1.0 0.0 1.0 }
+
+-- ==
+-- entry: test_rot_z
+-- input { 3.141592653589793 1.0 -1.0 0.0 } output { -1.0 1.0 0.0 }
+
+entry test_rot_x r x y z = unvec3 (vec3.rot_x r {x, y, z})
+entry test_rot_y r x y z = unvec3 (vec3.rot_y r {x, y, z})
+entry test_rot_z r x y z = unvec3 (vec3.rot_z r {x, y, z})
