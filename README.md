@@ -20,7 +20,7 @@ module vector_3 = cat_vector vector_2 vector_1
 module vector_5 = cat_vector vector_2 vector_3
 module vector_8 = cat_vector vector_5 vector_3
 
-let main (xs: [8]i32) =
+let main (xs: [vector_8.length]i32) =
   xs
   |> vector_8.from_array
   |> vector_8.map (+1)
