@@ -59,13 +59,13 @@ module type vector = {
   -- | Turn a vector of arrays into an array of vectors.
   val vzip [n] 'a : vector ([n]a) -> [n](vector a)
 
-  -- | Turn a array of vectors a vector of arrays.
+  -- | Turn an array of vectors into a vector of arrays.
   val vunzip [n] 'a : [n](vector a) -> vector ([n]a)
 
   -- | A vector with increasing elements, starting at 0.
   val iota : vector i64
 
-  -- | A vector with filled with a replicated value
+  -- | A vector filled with a replicated value.
   val replicate 'a : a -> vector a
 
   -- | Retrieve the element at some position.
