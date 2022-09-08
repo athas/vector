@@ -13,14 +13,14 @@ $ futhark pkg sync
 
 ## Usage example
 
-```
+```Futhark
 import "lib/github.com/athas/vector/vector"
 module vector_2 = cat_vector vector_1 vector_1
 module vector_3 = cat_vector vector_2 vector_1
 module vector_5 = cat_vector vector_2 vector_3
 module vector_8 = cat_vector vector_5 vector_3
 
-let main (xs: [vector_8.length]i32) =
+def main (xs: [vector_8.length]i32) =
   xs
   |> vector_8.from_array
   |> vector_8.map (+1)
